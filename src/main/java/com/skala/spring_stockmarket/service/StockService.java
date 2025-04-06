@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.skala.spring_stockmarket.domain.Stock;
-import com.skala.spring_stockmarket.dto.mapper.StockMapper;
 import com.skala.spring_stockmarket.dto.request.CreateStockRequest;
 import com.skala.spring_stockmarket.dto.response.StockResponse;
 import com.skala.spring_stockmarket.exception.CustomException;
+import com.skala.spring_stockmarket.mapper.StockMapper;
 import com.skala.spring_stockmarket.repository.StockRepository;
 
 import lombok.RequiredArgsConstructor;

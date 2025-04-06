@@ -15,7 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "player_stock_history")
+@Table(name = "player_stock_histories")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

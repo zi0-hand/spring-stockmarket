@@ -12,8 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.skala.spring_stockmarket.domain.Player;
 import com.skala.spring_stockmarket.domain.PlayerStock;
 import com.skala.spring_stockmarket.domain.Stock;
-import com.skala.spring_stockmarket.dto.mapper.PlayerMapper;
-import com.skala.spring_stockmarket.dto.mapper.PlayerStockMapper;
 import com.skala.spring_stockmarket.dto.request.AddMoneyRequest;
 import com.skala.spring_stockmarket.dto.request.BuyPlayerStockRequest;
 import com.skala.spring_stockmarket.dto.request.LoginRequest;
@@ -23,6 +21,8 @@ import com.skala.spring_stockmarket.dto.response.PlayerResponse;
 import com.skala.spring_stockmarket.dto.response.PlayerStockListResponse;
 import com.skala.spring_stockmarket.dto.response.PlayerStockResponse;
 import com.skala.spring_stockmarket.exception.CustomException;
+import com.skala.spring_stockmarket.mapper.PlayerMapper;
+import com.skala.spring_stockmarket.mapper.PlayerStockMapper;
 import com.skala.spring_stockmarket.repository.PlayerRepository;
 
 import lombok.RequiredArgsConstructor;

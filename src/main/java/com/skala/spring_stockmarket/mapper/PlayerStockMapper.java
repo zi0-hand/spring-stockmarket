@@ -1,4 +1,4 @@
-package com.skala.spring_stockmarket.dto.mapper;
+package com.skala.spring_stockmarket.mapper;
 
 import java.util.UUID;
 
