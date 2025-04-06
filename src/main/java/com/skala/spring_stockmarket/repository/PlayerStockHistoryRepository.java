@@ -1,8 +1,13 @@
+package com.skala.spring_stockmarket.repository;
 
-// 민주가 구현할라다 안함
+import java.util.UUID;
 
-// package com.skala.stockmarketminju.repository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-// public class PlayerStockHistoryRepository {
+import com.skala.spring_stockmarket.domain.PlayerStockHistory;
+
+@Repository
+public interface PlayerStockHistoryRepository extends JpaRepository<PlayerStockHistory, UUID> {
     
-// }
+}

@@ -65,7 +65,7 @@ public class PlayerController {
     // 플레이어 자금 추가 
     @Operation(summary="플레이어 자금 추가", description = "자금 추가 요청으로부터 사용자의 자본금을 추가합니다.")
     @PutMapping("/{playerId}/money")
-    public ResponseEntity<PlayerResponse> sellPlayerStock(@PathVariable("playerId") UUID playerId, @RequestBody AddMoneyRequest request) {
+    public ResponseEntity<PlayerResponse> addPlayerMoney(@PathVariable("playerId") UUID playerId, @RequestBody AddMoneyRequest request) {
         PlayerResponse response = playerService.addPlayerMoney(playerId, request);
         return ResponseEntity.ok(response);
     }

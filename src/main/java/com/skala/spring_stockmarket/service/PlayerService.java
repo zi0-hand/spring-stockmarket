@@ -1,5 +1,6 @@
 package com.skala.spring_stockmarket.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.skala.spring_stockmarket.domain.Player;
 import com.skala.spring_stockmarket.domain.PlayerStock;
+import com.skala.spring_stockmarket.domain.PlayerStockHistory;
 import com.skala.spring_stockmarket.domain.Stock;
 import com.skala.spring_stockmarket.dto.request.AddMoneyRequest;
 import com.skala.spring_stockmarket.dto.request.BuyPlayerStockRequest;
@@ -24,6 +26,7 @@ import com.skala.spring_stockmarket.exception.CustomException;
 import com.skala.spring_stockmarket.mapper.PlayerMapper;
 import com.skala.spring_stockmarket.mapper.PlayerStockMapper;
 import com.skala.spring_stockmarket.repository.PlayerRepository;
+import com.skala.spring_stockmarket.repository.PlayerStockHistoryRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,11 +39,10 @@ public class PlayerService {
     private final PlayerStockMapper playerStockMapper;
 
     private final PlayerRepository playerRepository;
+    private final PlayerStockHistoryRepository playerStockHistoryRepository;
 
     private final StockService stockService;
     private final PlayerStockService playerStockService;
-
-
 
 
     private Player findById(final UUID playerId) {
@@ -122,6 +124,19 @@ public class PlayerService {
         // 플레이어 보유 돈 차감
         player.subtractMoney(totalInvestment);
 
+        // 거래 이력 추가
+        PlayerStockHistory history = new PlayerStockHistory(
+            UUID.randomUUID(),
+            player,
+            stock,
+            "BUY",
+            request.getStockQuantity(),
+            stock.getPrice(),
+            totalInvestment,
+            LocalDateTime.now()
+        );
+        playerStockHistoryRepository.save(history);
+
         return playerStockMapper.toResponse(player, request.getStockQuantity(), playerStock);
     }
 
@@ -141,16 +156,33 @@ public class PlayerService {
         }
 
         int totalPrice = playerStockService.calculation(stock.getPrice(), request.getStockQuantity());
+        
+        // PlayerStockResponse 객체 생성을 위해 미리 객체를 만들어 둠
+        PlayerStockResponse response = playerStockMapper.toResponse(player, request.getStockQuantity(), playerStock);
 
         if (playerStock.getQuantity() == request.getStockQuantity()) {
             player.getPlayerStockList().remove(playerStock); // 보유 주식에서 제거 
         } else {
             playerStock.subtractQuantity(request.getStockQuantity(), totalPrice); // 수량만 감소 
         }
+        
         // 돈 증가
         player.addMoney(totalPrice);
 
-        return playerStockMapper.toResponse(player, request.getStockQuantity(), playerStock);
+        // 거래 이력 추가
+        PlayerStockHistory history = new PlayerStockHistory(
+            UUID.randomUUID(),
+            player,
+            stock,
+            "SELL",
+            request.getStockQuantity(),
+            stock.getPrice(),
+            totalPrice,
+            LocalDateTime.now()
+        );
+        playerStockHistoryRepository.save(history);
+
+        return response;
     }
 
     // 플레이어 자금본 추가 
