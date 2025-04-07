@@ -40,6 +40,7 @@ public class PlayerStockMapper {
 
     public PlayerStockListResponse toResponseForList(final PlayerStock playerStock) {
         return new PlayerStockListResponse(
+                playerStock.getStock().getId(),
                 playerStock.getStock().getName(),
                 playerStock.getStock().getPrice(),
                 playerStock.getQuantity(),

@@ -25,6 +25,7 @@ public class StockMapper {
     // 엔티티를 dto로 변환 
     public StockResponse toResponse(final Stock stock) {
         return new StockResponse(
+            stock.getId(),
             stock.getName(), 
             stock.getPrice()
         );
