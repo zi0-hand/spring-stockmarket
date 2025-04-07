@@ -22,3 +22,26 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# 내가 추가 
+# Gradle 관련
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDE 설정 파일
+*.iml
+.idea/
+.vscode/
+
+# 운영체제별 파일
+.DS_Store
+Thumbs.db
+
+# 환경 변수 및 민감 정보
+.env
+application-*.yml
+application-*.properties
+
+# 자동 생성된 빌드 산출물
+bin/
