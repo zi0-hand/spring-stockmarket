@@ -22,9 +22,10 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class StockService {
-   
+
     private final StockRepository stockRepository;
     private final StockMapper stockMapper;
+    private final StockPriceHistoryService stockPriceHistoryService;
 
     public Stock findById(final UUID stockId) {
         return stockRepository.findById(stockId)
@@ -56,6 +57,7 @@ public class StockService {
 
         return stockMapper.toResponse(stock);
     }
+    
 
     // 랜덤 비율로 주식 가격 변경 
     @Transactional
@@ -65,9 +67,11 @@ public class StockService {
         int changedPrice = calculateFluctuation(stock.getPrice());
         stock.changePrice(changedPrice); // 이때의 changePrice는 내가 stock 도메인 클래스를 만들때 설정했던 메서드 이름 
 
+        // 주식 가격 변동 이력 저장
+        stockPriceHistoryService.saveStockPriceHistory(stock, changedPrice);
+
         return changedPrice;
     }
-
 
     // 랜덤값 생성 
     private int calculateFluctuation(int price) {

@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.skala.spring_stockmarket.dto.request.CreateStockRequest;
+import com.skala.spring_stockmarket.dto.response.StockPriceHistoryResponse;
 import com.skala.spring_stockmarket.dto.response.StockResponse;
+import com.skala.spring_stockmarket.service.StockPriceHistoryService;
 import com.skala.spring_stockmarket.service.StockService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,6 +35,7 @@ import lombok.RequiredArgsConstructor;
 public class StockController {
 
     private final StockService stockService;
+    private final StockPriceHistoryService stockPriceHistoryService;
 
     // 전체 주식 목록 출력 
     @Operation(summary = "전체 주식 목록 확인", description = "시장에 나와있는 전체 주식 목록을 조회합니다.")
@@ -60,7 +63,15 @@ public class StockController {
         int changedStockPrice = stockService.changePrice(stockId);
         return ResponseEntity.ok(changedStockPrice + "로 주식 가격이 변경되었습니다.");
     }
-
+    
+    // 주식 가격 이력 조회 
+    @Operation(summary = "주식 가격 이력 조회", description = "특정 주식의 가격 변동 이력을 조회합니다.")
+    @GetMapping("/{stockId}/price-histories")
+    public ResponseEntity<List<StockPriceHistoryResponse>> getStockPriceHistories(
+            @PathVariable("stockId") UUID stockId) {
+        List<StockPriceHistoryResponse> response = stockPriceHistoryService.getStockPriceHistories(stockId);
+        return ResponseEntity.ok(response);
+    }
 
     
     /**
