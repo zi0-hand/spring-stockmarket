@@ -1,18 +1,13 @@
+// PlayerStockListResponse.java
 package com.skala.spring_stockmarket.dto.response;
 
 import java.util.UUID;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
-public class PlayerStockListResponse {
-    private UUID stockId; 
-    private String stockName;
-    private int stockPrice;
-    private int stockQuantity;
-    private int profitRate;
-    private int totalInvestment;
-    
-}
+public record PlayerStockListResponse(
+    UUID stockId,
+    String stockName,
+    int stockPrice,
+    int stockQuantity,
+    int profitRate,
+    int totalInvestment
+) {}

@@ -70,9 +70,9 @@ public class PlayerService {
 
     // 로그인 
     public void login(final LoginRequest loginRequest) {
-        Player player = findByNickname(loginRequest.getNickname());
+        Player player = findByNickname(loginRequest.nickname());
 
-        if (!player.getPassword().equals(loginRequest.getPassword())) {
+        if (!player.getPassword().equals(loginRequest.password())) {
             throw new CustomException("비밀번호가 일치하지 않습니다.", HttpStatus.CONFLICT);
         }
     }
@@ -80,7 +80,7 @@ public class PlayerService {
     // 회원가입
     @Transactional
     public PlayerResponse signUp(final SignUpRequest signUpRequest) {
-        if (playerRepository.findByNickname(signUpRequest.getNickname()).isPresent()) {
+        if (playerRepository.findByNickname(signUpRequest.nickname()).isPresent()) {
             throw new CustomException("이미 존재하는 닉네임입니다.", HttpStatus.CONFLICT);
         }
 
@@ -103,10 +103,10 @@ public class PlayerService {
     // 주식 매수 (구매)
     @Transactional
     public PlayerStockResponse buyStock(BuyPlayerStockRequest request) {
-        Player player = findByIdWithStocks(request.getPlayerId());  // 주식 구매 플레이어
-        Stock stock = stockService.findById(request.getStockId());  // 구매 대상 주식
+        Player player = findByIdWithStocks(request.playerId());  // 주식 구매 플레이어
+        Stock stock = stockService.findById(request.stockId());  // 구매 대상 주식
 
-        int totalInvestment = playerStockService.calculation(stock.getPrice(), request.getStockQuantity());
+        int totalInvestment = playerStockService.calculation(stock.getPrice(), request.stockQuantity());
         if (player.getMoney() < totalInvestment) {
             throw new CustomException("잔액이 부족합니다.", HttpStatus.CONFLICT);
         }
@@ -115,10 +115,10 @@ public class PlayerService {
         PlayerStock playerStock = findPlayerStock(player, stock);
 
         if (playerStock == null) { // 새로 구매하는 경우
-            playerStock = playerStockMapper.toEntity(player, stock, request.getStockQuantity(), totalInvestment);
+            playerStock = playerStockMapper.toEntity(player, stock, request.stockQuantity(), totalInvestment);
             player.getPlayerStockList().add(playerStock);
         } else {  // 기존 보유 주식 수량 증가
-            playerStock.addQuantity(request.getStockQuantity(), totalInvestment);
+            playerStock.addQuantity(request.stockQuantity(), totalInvestment);
         }
 
         // 플레이어 보유 돈 차감
@@ -130,40 +130,40 @@ public class PlayerService {
             player,
             stock,
             "BUY",
-            request.getStockQuantity(),
+            request.stockQuantity(),
             stock.getPrice(),
             totalInvestment,
             LocalDateTime.now()
         );
         playerStockHistoryRepository.save(history);
 
-        return playerStockMapper.toResponse(player, request.getStockQuantity(), playerStock);
+        return playerStockMapper.toResponse(player, request.stockQuantity(), playerStock);
     }
 
     // 주식 매도 (판매)
     @Transactional
     public PlayerStockResponse sellPlayerStock(SellPlayerStockRequest request) {
         
-        Player player = findByIdWithStocks(request.getPlayerId());
-        Stock stock = stockService.findById(request.getStockId());
+        Player player = findByIdWithStocks(request.playerId());
+        Stock stock = stockService.findById(request.stockId());
         
         PlayerStock playerStock = findPlayerStock(player, stock);
         if (playerStock == null) {
             throw new CustomException("보유 중인 주식이 아닙니다.", HttpStatus.NOT_FOUND);
         }
-        if (playerStock.getQuantity() < request.getStockQuantity()) {
+        if (playerStock.getQuantity() < request.stockQuantity()) {
             throw new CustomException("매도 수량이 보유 수량보다 많습니다.", HttpStatus.BAD_REQUEST);
         }
 
-        int totalPrice = playerStockService.calculation(stock.getPrice(), request.getStockQuantity());
+        int totalPrice = playerStockService.calculation(stock.getPrice(), request.stockQuantity());
         
         // PlayerStockResponse 객체 생성을 위해 미리 객체를 만들어 둠
-        PlayerStockResponse response = playerStockMapper.toResponse(player, request.getStockQuantity(), playerStock);
+        PlayerStockResponse response = playerStockMapper.toResponse(player, request.stockQuantity(), playerStock);
 
-        if (playerStock.getQuantity() == request.getStockQuantity()) {
+        if (playerStock.getQuantity() == request.stockQuantity()) {
             player.getPlayerStockList().remove(playerStock); // 보유 주식에서 제거 
         } else {
-            playerStock.subtractQuantity(request.getStockQuantity(), totalPrice); // 수량만 감소 
+            playerStock.subtractQuantity(request.stockQuantity(), totalPrice); // 수량만 감소 
         }
         
         // 돈 증가
@@ -175,7 +175,7 @@ public class PlayerService {
             player,
             stock,
             "SELL",
-            request.getStockQuantity(),
+            request.stockQuantity(),
             stock.getPrice(),
             totalPrice,
             LocalDateTime.now()
@@ -189,7 +189,7 @@ public class PlayerService {
     @Transactional
     public PlayerResponse addPlayerMoney(UUID playerId, AddMoneyRequest request) {
         Player player = findById(playerId);
-        player.addMoney(request.getMoney());
+        player.addMoney(request.money());
         return playerMapper.toResponse(player);
     }
 

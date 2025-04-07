@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class StockService {
-    
+   
     private final StockRepository stockRepository;
     private final StockMapper stockMapper;
 
@@ -47,7 +47,7 @@ public class StockService {
     // 주식 상장 
     @Transactional // 쓰기 가능 트랜잭션으로 재정의 
     public StockResponse createStock(CreateStockRequest request) {
-        if (stockRepository.existsByName(request.getName())) {
+        if (stockRepository.existsByName(request.name())) {
             throw new CustomException("이미 존재하는 주식입니다.", HttpStatus.CONFLICT);
         }
 

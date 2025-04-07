@@ -15,9 +15,9 @@ public class StockMapper {
     public Stock toEntity(final CreateStockRequest request) {
         return new Stock(
             UUID.randomUUID(), 
-            request.getName(), 
-            request.getPrice(), 
-            request.getDescription(), 
+            request.name(), 
+            request.price(), 
+            request.description(), 
             new ArrayList<>()
         );
     }
@@ -32,7 +32,4 @@ public class StockMapper {
     }
 
 
-
-
-    
 }

@@ -15,11 +15,11 @@ public class PlayerMapper {
     public Player signUpToEntity(final SignUpRequest signUpRequest) {
         return new Player(
             UUID.randomUUID(), 
-            signUpRequest.getNickname(), 
-            signUpRequest.getPassword(), 
-            signUpRequest.getMoney(), 
-            new ArrayList<>(), // 보유 주식 목록
-            new ArrayList<>() // 거래 내역 목록 
+            signUpRequest.nickname(), 
+            signUpRequest.password(), 
+            signUpRequest.money(), 
+            new ArrayList<>(),
+            new ArrayList<>()
         );
     } 
 
@@ -30,4 +30,5 @@ public class PlayerMapper {
             player.getMoney()
         );
     }
+
 }
