@@ -65,6 +65,7 @@ public class PlayerService {
             .map(player -> Double.valueOf(player.getMoney()))
             .orElseThrow(() -> new CustomException("플레이어가 존재하지 않습니다.", HttpStatus.NOT_FOUND));
     }
+    
 
     //플레이어의 보유 주식 목록에서 stock을 찾음
     private PlayerStock findPlayerStock(final Player player, final Stock stock) {
@@ -106,37 +107,34 @@ public class PlayerService {
         return player.getPlayerStockList().stream().map(playerStockMapper::toResponseForList).toList();
     }
 
-    // 주식 매수 (구매)
     @Transactional
     public PlayerStockResponse buyStock(BuyPlayerStockRequest request) {
         Player player = findByIdWithStocks(request.playerId());  // 주식 구매 플레이어
         Stock stock = stockService.findById(request.stockId());  // 구매 대상 주식
-
+    
         int totalInvestment = playerStockService.calculation(stock.getPrice(), request.stockQuantity());
         if (player.getMoney() < totalInvestment) {
             throw new CustomException("잔액이 부족합니다.", HttpStatus.CONFLICT);
         }
-
+    
         // 플레이어의 보유 주식 목록에서 해당 주식을 찾음
         PlayerStock playerStock = findPlayerStock(player, stock);
-
-        // 수익률 계산 (첫 매수이므로 수익률은 0%)
-        int profitRate = 0;
         
         if (playerStock == null) { // 새로 구매하는 경우
             playerStock = playerStockMapper.toEntity(player, stock, request.stockQuantity(), totalInvestment);
             player.getPlayerStockList().add(playerStock);
         } else {  // 기존 보유 주식 수량 증가
-            // 추가 매수인 경우, 현재 가격과 기존 투자 평균 가격 비교
-            double avgPrice = (double) playerStock.getTotalInvestment() / playerStock.getQuantity();
-            profitRate = (int) Math.round((stock.getPrice() - avgPrice) / avgPrice * 100);
-            
             playerStock.addQuantity(request.stockQuantity(), totalInvestment);
         }
-
+    
         // 플레이어 보유 돈 차감
         player.subtractMoney(totalInvestment);
-
+    
+        // 거래 시점의 수익률 계산 (매수 시)
+        double avgPurchasePrice = playerStock.getAveragePurchasePrice();
+        int profitRate = avgPurchasePrice > 0 ? 
+            (int) Math.round((stock.getPrice() - avgPurchasePrice) / avgPurchasePrice * 100) : 0;
+    
         // 거래 이력 추가 (수익률 포함)
         PlayerStockHistory history = new PlayerStockHistory(
             UUID.randomUUID(),
@@ -146,18 +144,17 @@ public class PlayerService {
             request.stockQuantity(),
             stock.getPrice(),
             totalInvestment,
-            profitRate,  // 수익률 추가
+            profitRate,  // 거래 시점의 수익률
             LocalDateTime.now()
         );
         playerStockHistoryRepository.save(history);
-
+    
         return playerStockMapper.toResponse(player, request.stockQuantity(), playerStock);
     }
 
     // 주식 매도 (판매)
     @Transactional
     public PlayerStockResponse sellPlayerStock(SellPlayerStockRequest request) {
-        
         Player player = findByIdWithStocks(request.playerId());
         Stock stock = stockService.findById(request.stockId());
         
@@ -168,16 +165,16 @@ public class PlayerService {
         if (playerStock.getQuantity() < request.stockQuantity()) {
             throw new CustomException("매도 수량이 보유 수량보다 많습니다.", HttpStatus.BAD_REQUEST);
         }
-
+    
         int totalPrice = playerStockService.calculation(stock.getPrice(), request.stockQuantity());
         
         // 수익률 계산 (현재 가격과 평균 매수가 비교)
-        double avgPrice = (double) playerStock.getTotalInvestment() / playerStock.getQuantity();
-        int profitRate = (int) Math.round((stock.getPrice() - avgPrice) / avgPrice * 100);
+        double avgPurchasePrice = playerStock.getAveragePurchasePrice();
+        int profitRate = (int) Math.round((stock.getPrice() - avgPurchasePrice) / avgPurchasePrice * 100);
         
         // PlayerStockResponse 객체 생성을 위해 미리 객체를 만들어 둠
         PlayerStockResponse response = playerStockMapper.toResponse(player, request.stockQuantity(), playerStock);
-
+    
         if (playerStock.getQuantity() == request.stockQuantity()) {
             player.getPlayerStockList().remove(playerStock); // 보유 주식에서 제거 
         } else {
@@ -186,7 +183,7 @@ public class PlayerService {
         
         // 돈 증가
         player.addMoney(totalPrice);
-
+    
         // 거래 이력 추가 (수익률 포함)
         PlayerStockHistory history = new PlayerStockHistory(
             UUID.randomUUID(),
@@ -196,11 +193,11 @@ public class PlayerService {
             request.stockQuantity(),
             stock.getPrice(),
             totalPrice,
-            profitRate,  // 수익률 추가
+            profitRate,  // 거래 시점의 수익률
             LocalDateTime.now()
         );
         playerStockHistoryRepository.save(history);
-
+    
         return response;
     }
 

@@ -9,14 +9,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "player_stocks")
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 public class PlayerStock {
     
@@ -36,11 +34,18 @@ public class PlayerStock {
     private int quantity; // 보유 수량
 
     @Column(nullable=false)
-    private int profitRate; // 수익률 
-
-    @Column(nullable=false)
     private int totalInvestment; // 총 투자금액 
 
+    // profitRate 필드 제거
+
+    // 생성자 수정
+    public PlayerStock(UUID id, Player player, Stock stock, int quantity, int totalInvestment) {
+        this.id = id;
+        this.player = player;
+        this.stock = stock;
+        this.quantity = quantity;
+        this.totalInvestment = totalInvestment;
+    }
 
     //== 비즈니스 로직 ==//
 
@@ -56,4 +61,9 @@ public class PlayerStock {
         this.totalInvestment -= totalPrice;
     }
     
+    // 평균 매수가 계산 메서드 추가
+    public double getAveragePurchasePrice() {
+        if (quantity == 0) return 0;
+        return (double) totalInvestment / quantity;
+    }
 }

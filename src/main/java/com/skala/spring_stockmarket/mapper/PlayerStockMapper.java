@@ -19,12 +19,9 @@ public class PlayerStockMapper {
             player, 
             stock, 
             stockQuantity, 
-            0,
             totalInvestment
             );
     }
-    // 서비스 내부에서 조회하고 계산한 값들을 기반으로 Entity를 생성하기 때문에 값을 바로 받는 형태이다 
-
 
     public PlayerStockResponse toResponse(final Player player, final int stockQuantity, final PlayerStock playerStock) {
         return new PlayerStockResponse(
@@ -37,16 +34,21 @@ public class PlayerStockMapper {
         );
     }
 
-
     public PlayerStockListResponse toResponseForList(final PlayerStock playerStock) {
+        // 수익률을 계산하지만 엔티티에 저장하지는 않음
+        double avgPurchasePrice = playerStock.getAveragePurchasePrice();
+        int currentPrice = playerStock.getStock().getPrice();
+        int profitRate = avgPurchasePrice > 0 ? 
+            (int) Math.round((currentPrice - avgPurchasePrice) / avgPurchasePrice * 100) : 0;
+            
         return new PlayerStockListResponse(
-                playerStock.getStock().getId(),
-                playerStock.getStock().getName(),
-                playerStock.getStock().getPrice(),
-                playerStock.getQuantity(),
-                playerStock.getProfitRate(),
-                playerStock.getTotalInvestment()
+            playerStock.getStock().getId(),
+            playerStock.getStock().getName(),
+            currentPrice,
+            playerStock.getQuantity(),
+            profitRate, // 실시간 계산된 수익률
+            playerStock.getTotalInvestment(),
+            avgPurchasePrice // 추가: 평균 매수가
         );
     }
-
 }
