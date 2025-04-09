@@ -18,8 +18,8 @@ public class AdvancedStockPriceSimulator {
 
         public StockTrend() {
             // 초기 추세와 변동성 랜덤 설정
-            this.momentum = (Math.random() - 0.5) * 0.2;
-            this.volatility = Math.random() * 0.1 + 0.05; // 5~15% 변동성
+            this.momentum = (Math.random() - 0.5) * 0.05; 
+            this.volatility = Math.random() * 0.03 + 0.01; // 1~4% 변동성
         }
         
         public int calculateNextPrice(int currentPrice) {

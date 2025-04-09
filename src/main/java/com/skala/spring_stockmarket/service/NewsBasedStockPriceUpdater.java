@@ -34,11 +34,11 @@ public class NewsBasedStockPriceUpdater {
         double impactFactor;
         if (newsEventProbability < 0.3) {
             // 긍정적 뉴스
-            impactFactor = Math.random() * 0.05 + 0.01; // 1~6% 상승
+            impactFactor = Math.random() * 0.02 + 0.005; // 0.5~2.5% 상승/하락
             return (int) (currentPrice * (1 + impactFactor));
         } else if (newsEventProbability < 0.6) {
             // 부정적 뉴스
-            impactFactor = Math.random() * 0.05 + 0.01; // 1~6% 하락
+            impactFactor = Math.random() * 0.02 + 0.005; // 0.5~2.5% 상승/하락
             return (int) (currentPrice * (1 - impactFactor));
         }
         
