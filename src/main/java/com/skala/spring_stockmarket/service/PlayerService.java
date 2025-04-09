@@ -60,6 +60,12 @@ public class PlayerService {
         .orElseThrow(() -> new CustomException("플레이어가 존재하지 않습니다.", HttpStatus.NOT_FOUND));
     }
 
+    public Double getPlayerMoney(UUID playerId) {
+        return playerRepository.findById(playerId)
+            .map(player -> Double.valueOf(player.getMoney()))
+            .orElseThrow(() -> new CustomException("플레이어가 존재하지 않습니다.", HttpStatus.NOT_FOUND));
+    }
+
     //플레이어의 보유 주식 목록에서 stock을 찾음
     private PlayerStock findPlayerStock(final Player player, final Stock stock) {
         return player.getPlayerStockList().stream() // List<PlayerStock>

@@ -62,6 +62,14 @@ public class PlayerController {
     }
     
 
+    @Operation(summary="플레이어 자금 조회", description = "플레이어 ID를 통해 사용자의 자본금을 조회합니다.")
+    @GetMapping("/{playerId}/money")
+    public ResponseEntity<Double> getPlayerMoney(@PathVariable("playerId") UUID playerId) {
+        Double money = playerService.getPlayerMoney(playerId);
+        return ResponseEntity.ok(money);
+    }
+    
+
     // 플레이어 자금 추가 
     @Operation(summary="플레이어 자금 추가", description = "자금 추가 요청으로부터 사용자의 자본금을 추가합니다.")
     @PutMapping("/{playerId}/money")
@@ -69,4 +77,5 @@ public class PlayerController {
         PlayerResponse response = playerService.addPlayerMoney(playerId, request);
         return ResponseEntity.ok(response);
     }
+
 }

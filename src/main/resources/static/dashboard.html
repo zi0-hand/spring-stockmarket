@@ -418,17 +418,16 @@
         // 플레이어 정보 로드
         async function loadPlayerInfo() {
             try {
-                // 플레이어 ID로 정보 조회 엔드포인트를 호출하도록 수정 필요
-                // 여기서는 예시로 페이지네이션 API에서 닉네임으로 필터링하는 방식 사용
-                const response = await fetch(`/api/players`);
+                // 플레이어 ID를 URL에 제대로 삽입
+                const response = await fetch(`/api/players/${playerId}/money`);
                 
                 if (response.ok) {
-                    const playerList = await response.json();
-                    const player = playerList.find(p => p.id === playerId);
-                    
-                    if (player) {
-                        document.getElementById('playerMoney').textContent = `자금: ${formatNumber(player.money)}원`;
-                    }
+                    // 응답은 이제 객체 배열이 아닌 단일 숫자 값
+                    const money = await response.json();
+                    // 숫자를 바로 표시
+                    document.getElementById('playerMoney').textContent = `자금: ${formatNumber(money)}원`;
+                } else {
+                    console.error('플레이어 자금 정보를 가져오는데 실패했습니다.');
                 }
             } catch (error) {
                 console.error('플레이어 정보 로드 오류:', error);
