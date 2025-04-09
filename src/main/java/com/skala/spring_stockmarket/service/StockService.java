@@ -69,7 +69,7 @@ public class StockService {
         int changedPrice = smartStockPriceService.updateSingleStockPrice(stock);
 
         // 주식 가격 변동 이력 저장
-        stockPriceHistoryService.saveStockPriceHistory(stock, changedPrice);
+        // stockPriceHistoryService.saveStockPriceHistory(stock, changedPrice);
 
         return changedPrice;
     }
