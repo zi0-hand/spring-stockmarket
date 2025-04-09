@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.skala.spring_stockmarket.dto.request.AddMoneyRequest;
 import com.skala.spring_stockmarket.dto.request.LoginRequest;
 import com.skala.spring_stockmarket.dto.request.SignUpRequest;
+import com.skala.spring_stockmarket.dto.response.PlayerDetailResponse;
 import com.skala.spring_stockmarket.dto.response.PlayerResponse;
 import com.skala.spring_stockmarket.service.PlayerService;
 
@@ -49,6 +50,14 @@ public class PlayerController {
     public ResponseEntity<PlayerResponse>  signUp(@RequestBody SignUpRequest signUpRequest) {
         PlayerResponse response = playerService.signUp(signUpRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    // 플레이어 1명 상세 조회
+    @Operation(summary="사용자 상세 조회", description="사용자의 상세 정보(보유 주식, 최근 거래)를 조회합니다.")
+    @GetMapping("/{playerId}/detail")
+    public ResponseEntity<PlayerDetailResponse> getPlayerDetail(@PathVariable("playerId") UUID playerId) {
+        PlayerDetailResponse response = playerService.getPlayerDetail(playerId);
+        return ResponseEntity.ok(response);
     }
 
     // 플레이어 전체 목록 조회 

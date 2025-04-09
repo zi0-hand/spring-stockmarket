@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,11 +20,14 @@ import com.skala.spring_stockmarket.dto.request.BuyPlayerStockRequest;
 import com.skala.spring_stockmarket.dto.request.LoginRequest;
 import com.skala.spring_stockmarket.dto.request.SellPlayerStockRequest;
 import com.skala.spring_stockmarket.dto.request.SignUpRequest;
+import com.skala.spring_stockmarket.dto.response.PlayerDetailResponse;
 import com.skala.spring_stockmarket.dto.response.PlayerResponse;
+import com.skala.spring_stockmarket.dto.response.PlayerStockHistoryResponse;
 import com.skala.spring_stockmarket.dto.response.PlayerStockListResponse;
 import com.skala.spring_stockmarket.dto.response.PlayerStockResponse;
 import com.skala.spring_stockmarket.exception.CustomException;
 import com.skala.spring_stockmarket.mapper.PlayerMapper;
+import com.skala.spring_stockmarket.mapper.PlayerStockHistoryMapper;
 import com.skala.spring_stockmarket.mapper.PlayerStockMapper;
 import com.skala.spring_stockmarket.repository.PlayerRepository;
 import com.skala.spring_stockmarket.repository.PlayerStockHistoryRepository;
@@ -37,6 +41,7 @@ public class PlayerService {
 
     private final PlayerMapper playerMapper;
     private final PlayerStockMapper playerStockMapper;
+    private final PlayerStockHistoryMapper playerStockHistoryMapper;
 
     private final PlayerRepository playerRepository;
     private final PlayerStockHistoryRepository playerStockHistoryRepository;
@@ -105,6 +110,30 @@ public class PlayerService {
             return null;
         }
         return player.getPlayerStockList().stream().map(playerStockMapper::toResponseForList).toList();
+    }
+
+    // 특정 플레이어의 상세 정보 조회 
+    public PlayerDetailResponse getPlayerDetail(UUID playerId) {
+        // 플레이어 정보 조회 (주식 목록 함께 로드)
+        Player player = findByIdWithStocks(playerId);
+        
+        // 보유 주식 목록 매핑
+        List<PlayerStockListResponse> stockList = player.getPlayerStockList().stream()
+                .map(playerStockMapper::toResponseForList)
+                .toList();
+        
+        // 최근 거래 이력 조회 (최근 10건만)
+        List<PlayerStockHistory> histories = playerStockHistoryRepository
+                .findByPlayer_Id(playerId, Sort.by(Sort.Direction.DESC, "timestamp"))
+                .stream()
+                .limit(10)
+                .toList();
+        
+        List<PlayerStockHistoryResponse> recentTransactions = histories.stream()
+                .map(playerStockHistoryMapper::toResponse)
+                .toList();
+        
+        return playerMapper.toDetailResponse(player, stockList, recentTransactions);
     }
 
     @Transactional
