@@ -59,10 +59,11 @@ public class StockController {
     // 주식 가격 변경
     @Operation(summary = "랜덤 주식 가격 변경", description = "랜덤 비율로 주식 가격을 변경합니다.")
     @PutMapping("/{stockId}")
-    public ResponseEntity<String> addStock(@PathVariable("stockId") UUID stockId) { // @URIPathVariable:  경로에 있는 변수 값을 메서드 파라미터로 연결
+    public ResponseEntity<String> changeStockPrice(@PathVariable("stockId") UUID stockId) { // @URIPathVariable:  경로에 있는 변수 값을 메서드 파라미터로 연결
         int changedStockPrice = stockService.changePrice(stockId);
         return ResponseEntity.ok(changedStockPrice + "로 주식 가격이 변경되었습니다.");
     }
+
     
     // 주식 가격 이력 조회 
     @Operation(summary = "주식 가격 이력 조회", description = "특정 주식의 가격 변동 이력을 조회합니다.")

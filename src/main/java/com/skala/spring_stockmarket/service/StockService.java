@@ -26,6 +26,7 @@ public class StockService {
     private final StockRepository stockRepository;
     private final StockMapper stockMapper;
     private final StockPriceHistoryService stockPriceHistoryService;
+    private final SmartStockPriceService smartStockPriceService;
 
     public Stock findById(final UUID stockId) {
         return stockRepository.findById(stockId)
@@ -64,21 +65,13 @@ public class StockService {
     public int changePrice(final UUID stockId) {
         Stock stock = findById(stockId);
 
-        int changedPrice = calculateFluctuation(stock.getPrice());
-        stock.changePrice(changedPrice); // 이때의 changePrice는 내가 stock 도메인 클래스를 만들때 설정했던 메서드 이름 
+        // 스마트 가격 업데이트 서비스 사용 
+        int changedPrice = smartStockPriceService.updateSingleStockPrice(stock);
 
         // 주식 가격 변동 이력 저장
         stockPriceHistoryService.saveStockPriceHistory(stock, changedPrice);
 
         return changedPrice;
-    }
-
-    // 랜덤값 생성 
-    private int calculateFluctuation(int price) {
-        // -10% ~ +10% 범위의 랜덤 비율 생성
-        double percentage = (Math.random() * 20) - 10;
-        double fluctuation = price * (percentage / 100);
-        return (int) Math.round(price + fluctuation); // 소수점 반올림 후 정수로 변환
     }
 
 }
