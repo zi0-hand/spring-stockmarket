@@ -46,6 +46,9 @@ public class PlayerStockHistory {
     private int totalAmount; // 총 양 = 구매량 * 구매 가격 
 
     @Column(nullable = false)
+    private int profitRate; // 거래 시점의 수익률 추가
+
+    @Column(nullable = false)
     private LocalDateTime timestamp;
     
 }

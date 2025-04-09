@@ -1,4 +1,3 @@
-// PlayerStockHistoryMapper.java 
 package com.skala.spring_stockmarket.mapper;
 
 import org.springframework.stereotype.Component;
@@ -17,6 +16,7 @@ public class PlayerStockHistoryMapper {
             history.getQuantity(),
             history.getPrice(),
             history.getTotalAmount(),
+            history.getProfitRate(),  // 수익률 추가
             history.getTimestamp()
         );
     }

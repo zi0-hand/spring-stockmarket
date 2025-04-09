@@ -1,4 +1,3 @@
-// PlayerStockHistoryResponse.java 
 package com.skala.spring_stockmarket.dto.response;
 
 import java.time.LocalDateTime;
@@ -11,5 +10,6 @@ public record PlayerStockHistoryResponse(
     int quantity,
     int price,
     int totalAmount,
+    int profitRate,  
     LocalDateTime timestamp
 ) {}
