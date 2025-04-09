@@ -22,16 +22,9 @@ public class SmartStockPriceService {
     private final StockPriceHistoryService stockPriceHistoryService;
     private final StockRepository stockRepository;
 
-    
-    // @Scheduled(fixedRate = 300000) // 5분마다 실행 (실제 운영 시 조정 가능)
-    // @Transactional
-    // public void updateAllStockPrices() {
-    //     List<Stock> stocks = stockRepository.findAll();
-        
-    //     stocks.forEach(this::updateSingleStockPrice);
-    // }
-
-    @Scheduled(fixedRate = 300900) //
+    // @Scheduled(fixedRate = 1000) // 1초마다 실행
+    @Scheduled(fixedRate = 30000) // 30초마다 실행
+    // @Scheduled(fixedRate = 300000) // 5분마다 실행
     @Transactional
     public void updateAllStockPrices() {
         log.info("주식 가격 자동 업데이트 시작 - {}", LocalDateTime.now());
