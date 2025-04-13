@@ -81,12 +81,14 @@ public class PlayerService {
     }
 
     // 로그인 
-    public void login(final LoginRequest loginRequest) {
+    public UUID login(final LoginRequest loginRequest) {
         Player player = findByNickname(loginRequest.nickname());
-
+    
         if (!player.getPassword().equals(loginRequest.password())) {
             throw new CustomException("비밀번호가 일치하지 않습니다.", HttpStatus.CONFLICT);
         }
+    
+        return player.getId(); 
     }
 
     // 회원가입

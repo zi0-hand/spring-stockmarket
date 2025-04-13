@@ -39,9 +39,9 @@ public class PlayerController {
     // 로그인 
     @Operation(summary="로그인", description="사용자가 로그인을 합니다.")
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
-        playerService.login(loginRequest);
-        return ResponseEntity.ok("로그인 되었습니다.");
+    public ResponseEntity<UUID> login(@RequestBody LoginRequest loginRequest) {
+        UUID playerId = playerService.login(loginRequest); 
+        return ResponseEntity.ok(playerId);              
     }
 
     // 회원가입
