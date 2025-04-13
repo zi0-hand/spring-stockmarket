@@ -23,7 +23,7 @@ public class SmartStockPriceService {
     private final StockRepository stockRepository;
 
     // @Scheduled(fixedRate = 1000) // 1초마다 실행
-    @Scheduled(fixedRate = 30000) // 30초마다 실행
+    @Scheduled(fixedRate = 60000) // 60초마다 실행
     // @Scheduled(fixedRate = 300000) // 5분마다 실행
     @Transactional
     public void updateAllStockPrices() {
