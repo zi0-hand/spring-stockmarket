@@ -21,7 +21,7 @@ spec:
       serviceAccountName: default
       containers:
         - name: sk043-stock-backend
-          image: amdp-registry.skala-ai.com/skala25a/sk043-stock-backend:1.0.0
+        image: amdp-registry.skala-ai.com/skala25a/sk043-my-app:1.0.0-1-ca061395b5fc
           imagePullPolicy: Always
           env:
             - name: USER_NAME
