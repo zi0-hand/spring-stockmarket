@@ -58,7 +58,7 @@ pipeline {
         stage('Update deploy.yaml and Git Push') {
             steps {
                 script {
-                    def newImageLine = "        image: ${env.IMAGE_REGISTRY}/${env.IMAGE_NAME}:${env.FINAL_IMAGE_TAG}"
+                    def newImageLine = "          image: ${env.IMAGE_REGISTRY}/${env.IMAGE_NAME}:${env.FINAL_IMAGE_TAG}"
                     def gitRepoPath = env.GIT_URL.replaceFirst(/^https?:\/\//, '')
 
                     sh """
